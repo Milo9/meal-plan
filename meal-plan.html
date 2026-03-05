@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Meal Planner</title>
+
+<style>
+:root {
+  --bg: #F5F0E8;
+  --card: #FFFFFF;
+  --olive: #4A6741;
+  --olive-mid: #6B8F61;
+  --olive-pale: #E8EEE6;
+  --amber: #C4821A;
+  --amber-pale: #FDF3E3;
+  --rust: #B05030;
+  --rust-pale: #FAECE7;
+  --ink: #1E1E18;
+  --muted: #7A7868;
+  --border: #E2DDD4;
+  --selected: #4A6741;
+  --tab-h: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* ── TABS ── */
+.tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: calc(var(--tab-h) + var(--safe-bottom));
+  background: #fff;
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 200;
+  padding-bottom: var(--safe-bottom);
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding-bottom: 2px;
+}
+.tab.active { color: var(--olive); }
+.tab-icon { font-size: 22px; line-height: 1; }
+
+/* ── SCREENS ── */
+.screen {
+  display: none;
+  min-height: 100vh;
+  padding-bottom: calc(var(--tab-h) + var(--safe-bottom) + 16px);
+}
+.screen.active { display: block; }
+
+/* ── HEADER ── */
+.screen-header {
+  padding: 52px 20px 20px;
+  background: var(--olive);
+  position: relative;
+  overflow: hidden;
+}
+.screen-header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; right: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+.screen-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+}
+.screen-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.15;
+}
+.screen-title em {
+  font-style: italic;
+  color: #F0C97A;
+}
+.screen-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 6px;
+  font-weight: 300;
+}
+
+/* ── PLAN SCREEN ── */
+.plan-content { padding: 20px 16px 0; }
+
+.plan-intro {
+  background: var(--olive-pale);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--olive);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.plan-intro-icon { font-size: 20px; flex-shrink: 0; }
+
+.category-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 20px 0 10px 4px;
+}
+
+.meal-tile {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+  position: relative;
+}
+.meal-tile.selected {
+  border-color: var(--olive);
+  background: #F0F5EF;
+}
+.meal-tile-emoji {
+  font-size: 32px;
+  flex-shrink: 0;
+  width: 44px;
+  text-align: center;
+}
+.meal-tile-info { flex: 1; min-width: 0; }
+.meal-tile-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.meal-tile-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.meal-tile-check {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 13px;
+  color: transparent;
+}
+.meal-tile.selected .meal-tile-check {
+  background: var(--olive);
+  border-color: var(--olive);
+  color: #fff;
+}
+
+.plan-actions {
+  padding: 16px 16px 0;
+  display: flex;
+  gap: 10px;
+}
+.btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.2px;
+}
+.btn-primary {
+  background: var(--olive);
+  color: #fff;
+}
+.btn-secondary {
+  background: var(--border);
+  color: var(--muted);
+}
+.btn:active { transform: scale(0.97); }
+
+.selected-count {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 10px 0 4px;
+}
+.selected-count strong { color: var(--olive); }
+
+/* ── SHOP SCREEN ── */
+.shop-content { padding: 20px 16px 0; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 32px;
+  color: var(--muted);
+}
+.empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-state-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.empty-state p { font-size: 14px; line-height: 1.6; }
+
+.shop-meals-used {
+  background: var(--olive-pale);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--olive);
+}
+.shop-meals-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.shop-meal-tag {
+  display: inline-block;
+  background: var(--olive);
+  color: #fff;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  margin: 3px 3px 0 0;
+}
+
+.shop-section {
+  margin-bottom: 20px;
+}
+.shop-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+.shop-card {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+.shop-item {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--bg);
+  gap: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.shop-item:last-child { border-bottom: none; }
+.shop-item.checked { background: #f9f9f7; }
+.shop-item-check {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: transparent;
+  transition: all 0.2s;
+}
+.shop-item.checked .shop-item-check {
+  background: var(--olive-mid);
+  border-color: var(--olive-mid);
+  color: #fff;
+}
+.shop-item-text {
+  flex: 1;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.shop-item.checked .shop-item-text {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border);
+}
+.shop-item-qty {
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.staples-note {
+  background: var(--amber-pale);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--amber);
+  border-left: 3px solid var(--amber);
+}
+.staples-note strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ── COOK SCREEN ── */
+.cook-content { padding: 20px 16px 0; }
+
+.recipe-card {
+  background: var(--card);
+  border-radius: 18px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+.recipe-card-header {
+  padding: 18px 18px 14px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  cursor: pointer;
+  user-select: none;
+}
+.recipe-card-emoji {
+  font-size: 36px;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+.recipe-card-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.3;
+  flex: 1;
+}
+.recipe-card-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.recipe-expand-icon {
+  font-size: 18px;
+  color: var(--muted);
+  transition: transform 0.25s;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.recipe-card.open .recipe-expand-icon { transform: rotate(180deg); }
+
+.recipe-body {
+  display: none;
+  padding: 0 18px 18px;
+  border-top: 1px solid var(--bg);
+  animation: slideDown 0.2s ease;
+}
+.recipe-card.open .recipe-body { display: block; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.recipe-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 16px 0 8px;
+}
+
+.ingredients-list {
+  list-style: none;
+  background: var(--bg);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.ingredients-list li {
+  padding: 9px 12px;
+  font-size: 13.5px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ingredients-list li:last-child { border-bottom: none; }
+.ing-qty { color: var(--muted); flex-shrink: 0; font-size: 13px; }
+
+.steps-list { list-style: none; }
+.step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--olive);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-text { font-size: 14px; line-height: 1.55; padding-top: 3px; }
+
+.milo-callout {
+  background: #EAF3FF;
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: #2A5A8A;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.milo-callout-icon { flex-shrink: 0; font-size: 16px; }
+
+.mod-callout {
+  background: var(--amber-pale);
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #7A4A10;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.mod-callout-icon { flex-shrink: 0; }
+
+</style>
+</head>
+<body>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('plan')" id="tab-plan">
+    <span class="tab-icon">🗓</span>
+    <span>Plan</span>
+  </div>
+  <div class="tab" onclick="switchTab('shop')" id="tab-shop">
+    <span class="tab-icon">🛒</span>
+    <span>Shop</span>
+  </div>
+  <div class="tab" onclick="switchTab('cook')" id="tab-cook">
+    <span class="tab-icon">👩‍🍳</span>
+    <span>Cook</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     PLAN SCREEN
+══════════════════════════════════ -->
+<div class="screen active" id="screen-plan">
+  <div class="screen-header">
+    <div class="screen-label">Sunday Planning</div>
+    <div class="screen-title">Pick this<br><em>week's meals</em></div>
+    <div class="screen-sub">Tap meals to select · Shop tab builds your list</div>
+  </div>
+
+  <div class="plan-content">
+    <div class="plan-intro">
+      <span class="plan-intro-icon">💡</span>
+      <span>Tap any meal to add it to this week. The Shop tab generates your grocery list automatically.</span>
+    </div>
+
+    <div id="meal-list"></div>
+
+    <div class="selected-count" id="selected-count">No meals selected yet</div>
+    <div class="plan-actions">
+      <button class="btn btn-secondary" onclick="clearAll()">Clear all</button>
+      <button class="btn btn-primary" onclick="switchTab('shop')">Build shopping list →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SHOP SCREEN
+══════════════════════════════════ -->
+<div class="screen" id="screen-shop">
+  <div class="screen-header">
+    <div class="screen-label">Grocery List</div>
+    <div class="screen-title">Shopping<br><em>list</em></div>
+    <div class="screen-sub">Tap items to check them off as you go</div>
+  </div>
+
+  <div class="shop-content" id="shop-content"></div>
+</div>
+
+<!-- ══════════════════════════════════
+     COOK SCREEN
+══════════════════════════════════ -->
+<div class="screen" id="screen-cook">
+  <div class="screen-header">
+    <div class="screen-label">In the Kitchen</div>
+    <div class="screen-title">This week's<br><em>recipes</em></div>
+    <div class="screen-sub">Your selected meals · Tap to expand</div>
+  </div>
+
+  <div class="cook-content" id="cook-content"></div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// DATA
+// ══════════════════════════════════
+
+const MEALS = [
+  {
+    id: 'mex-chicken',
+    name: 'Mexican Shredded Chicken',
+    emoji: '🌮',
+    category: 'Slow Cooker',
+    method: 'Slow Cooker',
+    time: '10 min prep',
+    miloNote: 'Add avocado on top for extra omega-3s.',
+    ingredients: [
+      { item: 'Chicken breasts', qty: '4', cat: 'Protein' },
+      { item: 'Black beans (no-salt-added)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Corn (frozen or canned)', qty: '1 cup', cat: 'Pantry' },
+      { item: 'Salsa', qty: '1 jar', cat: 'Pantry' },
+      { item: 'Brown rice', qty: '2 cups', cat: 'Pantry' },
+      { item: 'Avocado', qty: '2', cat: 'Produce' },
+      { item: 'Plain Greek yogurt', qty: 'small tub', cat: 'Dairy' },
+    ],
+    steps: [
+      'Add chicken breasts, black beans, corn, and salsa to slow cooker. Season with cumin and garlic powder.',
+      'Cook on low 6–8 hrs or high 3–4 hrs.',
+      'Shred chicken with two forks directly in the pot.',
+      'Serve over brown rice. Top with avocado and Greek yogurt.'
+    ],
+    mod: null
+  },
+  {
+    id: 'sc-chicken-veg',
+    name: 'Chicken Thighs & Veg',
+    emoji: '🍲',
+    category: 'Slow Cooker',
+    method: 'Slow Cooker',
+    time: '10 min prep',
+    miloNote: 'Add a salmon filet to a 400°F oven at the same time — done in 20–25 min.',
+    ingredients: [
+      { item: 'Bone-in chicken thighs', qty: '6–8', cat: 'Protein' },
+      { item: 'Low-sodium chicken broth', qty: '2 cups', cat: 'Pantry' },
+      { item: 'Sweet potato', qty: '2 large', cat: 'Produce' },
+      { item: 'Carrots', qty: '3', cat: 'Produce' },
+      { item: 'Celery', qty: '3 ribs', cat: 'Produce' },
+      { item: 'Yellow onion', qty: '1', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '4', cat: 'Produce' },
+    ],
+    steps: [
+      'Chop sweet potato into chunks. Slice carrots, celery, onion. Mince garlic.',
+      'Add everything to slow cooker with broth. Season with salt and pepper.',
+      'Cook on low 7–8 hrs or high 3–4 hrs.',
+      'Shred chicken into the broth. It\'s a full meal in the pot.'
+    ],
+    mod: null
+  },
+  {
+    id: 'turkey-chili',
+    name: 'Turkey Chili',
+    emoji: '🌶️',
+    category: 'Slow Cooker',
+    method: 'Slow Cooker',
+    time: '15 min prep',
+    miloNote: null,
+    ingredients: [
+      { item: 'Ground turkey', qty: '500g', cat: 'Protein' },
+      { item: 'Diced tomatoes (no-salt-added)', qty: '2 cans (15 oz)', cat: 'Pantry' },
+      { item: 'Kidney beans (no-salt-added)', qty: '2 cans (15 oz)', cat: 'Pantry' },
+      { item: 'Yellow onion', qty: '1', cat: 'Produce' },
+      { item: 'Bell pepper', qty: '1', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '3', cat: 'Produce' },
+      { item: 'Plain Greek yogurt', qty: 'small tub', cat: 'Dairy' },
+    ],
+    steps: [
+      'Brown ground turkey in a pan. Drain excess fat.',
+      'Dice onion, pepper, and garlic.',
+      'Add everything to slow cooker. Season with chili powder, cumin, paprika, salt.',
+      'Cook on low 6–8 hrs. Serve with Greek yogurt on top instead of sour cream.'
+    ],
+    mod: 'Use no-salt-added canned tomatoes. Rinse beans before using.'
+  },
+  {
+    id: 'lentil-soup',
+    name: 'Red Lentil Soup',
+    emoji: '🍛',
+    category: 'Slow Cooker',
+    method: 'Slow Cooker',
+    time: '10 min prep',
+    miloNote: null,
+    ingredients: [
+      { item: 'Red lentils', qty: '1½ cups', cat: 'Pantry' },
+      { item: 'Diced tomatoes (no-salt-added)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Low-sodium vegetable broth', qty: '4 cups', cat: 'Pantry' },
+      { item: 'Yellow onion', qty: '1', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '3', cat: 'Produce' },
+      { item: 'Lemon', qty: '1', cat: 'Produce' },
+    ],
+    steps: [
+      'Dice onion and mince garlic.',
+      'Add lentils, tomatoes, broth, onion, garlic, cumin, turmeric, and coriander to slow cooker.',
+      'Cook on low 6–8 hrs. Red lentils dissolve into a thick, creamy soup — no blending needed.',
+      'Squeeze lemon over each bowl before serving.'
+    ],
+    mod: null
+  },
+  {
+    id: 'med-chicken',
+    name: 'Mediterranean Baked Chicken',
+    emoji: '🍋',
+    category: 'Sheet Pan',
+    method: 'Oven · 425°F',
+    time: '15 min prep · 22 min oven',
+    miloNote: 'Add a salmon filet to his side of the pan — same 425°F, done in 20–25 min.',
+    ingredients: [
+      { item: 'Chicken breasts', qty: '2 large', cat: 'Protein' },
+      { item: 'Cherry tomatoes', qty: '½ pint', cat: 'Produce' },
+      { item: 'Shallot', qty: '1 large', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '3', cat: 'Produce' },
+      { item: 'Lemon', qty: '1 small', cat: 'Produce' },
+      { item: 'Castelvetrano olives', qty: '¼ cup', cat: 'Pantry' },
+      { item: 'Capers', qty: '2 tbsp', cat: 'Pantry' },
+      { item: 'Feta crumbles (optional)', qty: '1 oz', cat: 'Dairy' },
+      { item: 'Fresh parsley or basil', qty: 'small bunch', cat: 'Produce' },
+    ],
+    steps: [
+      'Preheat oven to 425°F. Halve cherry tomatoes, slice shallot, mince garlic, slice lemon into rings.',
+      'In baking dish, combine tomatoes, shallot, garlic, lemon slices, olives, capers with 1 tbsp olive oil and a pinch of salt.',
+      'Pound chicken breasts to even thickness (~¾ inch). Brush with olive oil. Rub with garlic powder, onion powder, smoked paprika, oregano, tarragon, and 1 tsp kosher salt.',
+      'Nestle chicken on top of vegetables. Bake 18 min.',
+      'Switch oven to broil (high). Broil 2–4 min until golden. Check internal temp reaches 165°F.',
+      'Rest 5 min. Garnish with parsley and optional feta.'
+    ],
+    mod: 'Original recipe uses 2 tsp salt in the rub — use 1 tsp instead to keep sodium lower.'
+  },
+  {
+    id: 'pork-tenderloin',
+    name: 'Plain Pork Tenderloin',
+    emoji: '🥩',
+    category: 'Sheet Pan',
+    method: 'Oven · 400°F',
+    time: '10 min prep · 25 min oven',
+    miloNote: null,
+    ingredients: [
+      { item: 'Pork tenderloin', qty: '1 large (~500g)', cat: 'Protein' },
+      { item: 'Sweet potato', qty: '2 large', cat: 'Produce' },
+      { item: 'Fresh rosemary or thyme', qty: 'a few sprigs', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '3', cat: 'Produce' },
+    ],
+    steps: [
+      'Preheat oven to 400°F. Cut sweet potatoes into wedges.',
+      'Rub tenderloin with olive oil, minced garlic, rosemary, salt and pepper. Takes 2 minutes.',
+      'Place pork and sweet potato wedges on same sheet pan.',
+      'Roast 25 min until pork reaches 145°F internal. Let rest 5 min before slicing.'
+    ],
+    mod: 'Replaces Marco Angelo pre-marinated pork — same ease, fraction of the sodium.'
+  },
+  {
+    id: 'turkey-meatloaf',
+    name: 'Turkey Meatloaf',
+    emoji: '🍖',
+    category: 'Sheet Pan',
+    method: 'Oven · 375°F',
+    time: '15 min prep · 55 min oven',
+    miloNote: null,
+    ingredients: [
+      { item: 'Ground turkey', qty: '500g', cat: 'Protein' },
+      { item: 'Egg', qty: '1', cat: 'Dairy' },
+      { item: 'Yellow onion', qty: '½', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '2', cat: 'Produce' },
+      { item: 'Breadcrumbs (whole wheat)', qty: '⅓ cup', cat: 'Pantry' },
+      { item: 'Sweet potato', qty: '2 large', cat: 'Produce' },
+    ],
+    steps: [
+      'Preheat oven to 375°F. Dice onion and garlic finely.',
+      'Mix ground turkey, egg, onion, garlic, breadcrumbs, Worcestershire, salt and pepper. Shape into a loaf on a baking sheet.',
+      'Optional: spread a little ketchup on top.',
+      'Bake 50–55 min until internal temp reaches 165°F.',
+      'Serve with mashed sweet potato (not white) — boil sweet potato, mash with a little olive oil and salt.'
+    ],
+    mod: 'Side should be mashed sweet potato or cauliflower mash — not mashed white potato.'
+  },
+  {
+    id: 'taco-bowls',
+    name: 'Turkey Taco Bowls',
+    emoji: '🥑',
+    category: 'Stovetop',
+    method: 'Stovetop',
+    time: '20 min',
+    miloNote: null,
+    ingredients: [
+      { item: 'Ground turkey', qty: '500g', cat: 'Protein' },
+      { item: 'Black beans (no-salt-added)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Corn (frozen or canned)', qty: '1 cup', cat: 'Pantry' },
+      { item: 'Salsa', qty: '1 cup', cat: 'Pantry' },
+      { item: 'Brown rice', qty: '2 cups', cat: 'Pantry' },
+      { item: 'Avocado', qty: '2', cat: 'Produce' },
+      { item: 'Plain Greek yogurt', qty: 'small tub', cat: 'Dairy' },
+      { item: 'Shredded cheese', qty: 'small bag', cat: 'Dairy' },
+    ],
+    steps: [
+      'Cook brown rice according to package.',
+      'Brown ground turkey in a pan over medium-high. Season with taco spices (cumin, chili powder, garlic powder, salt).',
+      'Add black beans, corn, and salsa. Stir and simmer 5 min.',
+      'Build bowls: rice → turkey mixture → avocado → Greek yogurt → cheese.'
+    ],
+    mod: null
+  },
+  {
+    id: 'chickpea-curry',
+    name: 'Chickpea & Spinach Curry',
+    emoji: '🍛',
+    category: 'Stovetop',
+    method: 'Stovetop',
+    time: '20 min',
+    miloNote: null,
+    ingredients: [
+      { item: 'Chickpeas (no-salt-added)', qty: '2 cans (15 oz)', cat: 'Pantry' },
+      { item: 'Diced tomatoes (no-salt-added)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Coconut milk (light)', qty: '1 can', cat: 'Pantry' },
+      { item: 'Baby spinach', qty: '3 cups', cat: 'Produce' },
+      { item: 'Yellow onion', qty: '1', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '3', cat: 'Produce' },
+      { item: 'Fresh ginger', qty: '1 inch', cat: 'Produce' },
+      { item: 'Brown rice', qty: '2 cups', cat: 'Pantry' },
+    ],
+    steps: [
+      'Dice onion, mince garlic and ginger.',
+      'Sauté onion in olive oil 5 min. Add garlic and ginger, cook 1 min.',
+      'Add curry powder (or garam masala + turmeric), stir 30 sec.',
+      'Add chickpeas, diced tomatoes, and coconut milk. Simmer 10 min.',
+      'Stir in spinach — it wilts in 1–2 min. Serve over brown rice.'
+    ],
+    mod: null
+  },
+  {
+    id: 'stir-fry',
+    name: 'Asian Chicken Stir Fry',
+    emoji: '🥢',
+    category: 'Stovetop',
+    method: 'Stovetop',
+    time: '20 min',
+    miloNote: null,
+    ingredients: [
+      { item: 'Chicken breast', qty: '2 large', cat: 'Protein' },
+      { item: 'Broccoli', qty: '1 head', cat: 'Produce' },
+      { item: 'Bell peppers', qty: '2', cat: 'Produce' },
+      { item: 'Snap peas', qty: '1 cup', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '3', cat: 'Produce' },
+      { item: 'Fresh ginger', qty: '1 inch', cat: 'Produce' },
+      { item: 'Low-sodium soy sauce (Kikkoman)', qty: '3 tbsp', cat: 'Pantry' },
+      { item: 'Brown rice', qty: '2 cups', cat: 'Pantry' },
+    ],
+    steps: [
+      'Cook brown rice. Slice chicken into strips. Chop vegetables.',
+      'Heat a wok or large pan on high. Add oil.',
+      'Cook chicken strips 3–4 min until cooked through. Remove and set aside.',
+      'Add garlic and ginger, stir 30 sec. Add broccoli, peppers, snap peas — stir fry 4–5 min.',
+      'Return chicken. Add low-sodium soy sauce + a drizzle of sesame oil. Toss everything together.',
+      'Serve over brown rice.'
+    ],
+    mod: 'Use Kikkoman reduced-sodium soy sauce — about 40% less sodium with no flavour difference.'
+  },
+  {
+    id: 'moroccan-stew',
+    name: 'Moroccan Chickpea Stew',
+    emoji: '🫘',
+    category: 'Stovetop',
+    method: 'Stovetop',
+    time: '15 min prep · 30 min simmer',
+    miloNote: null,
+    ingredients: [
+      { item: 'Chickpeas (no-salt-added)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Diced tomatoes (no-salt-added)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Low-sodium vegetable broth', qty: '2 cups', cat: 'Pantry' },
+      { item: 'Sweet potato', qty: '2 large', cat: 'Produce' },
+      { item: 'Baby spinach', qty: '3 cups', cat: 'Produce' },
+      { item: 'Yellow onion', qty: '1', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '3', cat: 'Produce' },
+      { item: 'Lemon', qty: '1', cat: 'Produce' },
+      { item: 'Quinoa', qty: '2 cups', cat: 'Pantry' },
+      { item: 'Plain Greek yogurt', qty: 'small tub', cat: 'Dairy' },
+      { item: 'Fresh cilantro', qty: 'small bunch', cat: 'Produce' },
+    ],
+    steps: [
+      'Dice onion, mince garlic, cube sweet potato into bite-sized pieces.',
+      'Sauté onion in olive oil 5 min. Add garlic, cook 1 min. Add spices (paprika, cumin, coriander, turmeric, ginger, cinnamon, pinch of cayenne), stir 30 sec.',
+      'Add diced tomatoes and broth. Bring to a boil.',
+      'Add sweet potato and chickpeas. Simmer 25–30 min until sweet potato is tender.',
+      'Stir in spinach last 2 min. Serve over quinoa (not couscous).',
+      'Garnish with cilantro, squeeze of lemon, and dollop of Greek yogurt.'
+    ],
+    mod: 'Serve over quinoa instead of couscous — higher protein, lower glycemic index.'
+  },
+  {
+    id: 'shakshuka',
+    name: 'Shakshuka with Feta',
+    emoji: '🍳',
+    category: 'Stovetop',
+    method: 'Stovetop',
+    time: '10 min prep · 25 min cook',
+    miloNote: null,
+    ingredients: [
+      { item: 'Eggs', qty: '4–6 large', cat: 'Dairy' },
+      { item: 'Diced tomatoes', qty: '1 can (28 oz)', cat: 'Pantry' },
+      { item: 'White beans (rinsed)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Red bell pepper', qty: '1', cat: 'Produce' },
+      { item: 'Yellow onion', qty: '1 large', cat: 'Produce' },
+      { item: 'Feta crumbles', qty: '½ cup', cat: 'Dairy' },
+      { item: 'Fresh parsley or cilantro', qty: 'small bunch', cat: 'Produce' },
+    ],
+    steps: [
+      'Toast coriander, cumin, and fennel seeds in a dry cast iron pan ~2 min until fragrant. Grind in mortar or spice grinder.',
+      'Heat olive oil in same pan. Add sliced pepper and onion — let them char without stirring, ~10 min, until blackened in parts.',
+      'Add ground spices + smoked paprika + salt. Stir 1 min. Add diced tomatoes and white beans. Simmer 5 min until thickened.',
+      'Make divots in the sauce, crack one egg into each. Season eggs with salt and pepper.',
+      'Cover and cook on low 4–6 min until whites are just set.',
+      'Top with feta and fresh herbs. Serve immediately.'
+    ],
+    mod: null
+  },
+  {
+    id: 'med-bowls',
+    name: 'Mediterranean Quinoa Bowls',
+    emoji: '🥙',
+    category: 'Stovetop',
+    method: 'Stovetop',
+    time: '25 min',
+    miloNote: null,
+    ingredients: [
+      { item: 'Quinoa', qty: '1 cup', cat: 'Pantry' },
+      { item: 'Chickpeas (no-salt-added)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Cherry tomatoes', qty: '1 pint', cat: 'Produce' },
+      { item: 'Cucumber', qty: '1', cat: 'Produce' },
+      { item: 'Mixed salad greens', qty: '8 cups', cat: 'Produce' },
+      { item: 'Tahini', qty: '¼ cup', cat: 'Pantry' },
+      { item: 'Lemon', qty: '1', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '1', cat: 'Produce' },
+      { item: 'Fresh parsley', qty: 'small bunch', cat: 'Produce' },
+    ],
+    steps: [
+      'Cook quinoa: bring 1¼ cups water to boil, add 1 cup quinoa and ½ tsp salt. Remove from heat, cover 5 min. Stir in olive oil and chopped parsley.',
+      'Season chickpeas: toss drained, rinsed chickpeas with olive oil, cumin, and salt.',
+      'Make tahini sauce: whisk tahini, lemon juice, minced garlic, and water until smooth.',
+      'Assemble bowls: greens → quinoa → chickpeas → sliced cucumber → halved cherry tomatoes → drizzle tahini sauce.'
+    ],
+    mod: 'Uses quinoa instead of couscous — the recipe\'s own gluten-free suggestion, with more protein and lower GI.'
+  },
+  {
+    id: 'tortilla-soup',
+    name: 'Vegetarian Tortilla Soup',
+    emoji: '🫙',
+    category: 'Stovetop',
+    method: 'Stovetop',
+    time: '20 min prep · 15 min simmer',
+    miloNote: null,
+    ingredients: [
+      { item: 'Black beans (rinsed)', qty: '2 cans (15 oz)', cat: 'Pantry' },
+      { item: 'Fire-roasted crushed tomatoes', qty: '1 can (28 oz)', cat: 'Pantry' },
+      { item: 'Low-sodium vegetable broth', qty: '4 cups', cat: 'Pantry' },
+      { item: 'Corn (frozen or canned)', qty: '1½ cups', cat: 'Pantry' },
+      { item: 'Chipotle peppers in adobo sauce', qty: '1 small can', cat: 'Pantry' },
+      { item: 'Yellow onion', qty: '1', cat: 'Produce' },
+      { item: 'Green bell pepper', qty: '1', cat: 'Produce' },
+      { item: 'Garlic cloves', qty: '4', cat: 'Produce' },
+      { item: 'Corn tortillas (6-inch)', qty: '6', cat: 'Pantry' },
+      { item: 'Lime', qty: '1', cat: 'Produce' },
+      { item: 'Fresh cilantro', qty: 'small bunch', cat: 'Produce' },
+    ],
+    steps: [
+      'Preheat oven to 375°F. Slice corn tortillas into strips, brush with olive oil and salt, bake 10–12 min until crispy.',
+      'Dice onion and pepper, mince garlic. Sauté onion in olive oil 5 min. Add pepper and garlic, cook 2 min.',
+      'Add oregano and cumin, stir 1 min. Add tomatoes, black beans, corn, 1½ tbsp adobo sauce, broth, and salt.',
+      'Bring to boil then simmer 10 min. Taste — add more adobo sauce carefully, it\'s salty.',
+      'Serve topped with crispy tortilla strips, cilantro, and a squeeze of lime.'
+    ],
+    mod: 'Use low-sodium vegetable broth — regular broth is a major sodium source. Go easy on the adobo sauce.'
+  },
+  {
+    id: 'veggie-wrap',
+    name: 'Chickpea Veggie Wrap',
+    emoji: '🌯',
+    category: 'No Cook',
+    method: 'No Cook',
+    time: '15 min',
+    miloNote: null,
+    ingredients: [
+      { item: 'Chickpeas (rinsed)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Avocado oil mayo (Chosen Foods or Primal Kitchen)', qty: 'small jar', cat: 'Pantry' },
+      { item: 'Hummus', qty: '½ cup', cat: 'Pantry' },
+      { item: 'Whole wheat burrito tortillas (10-inch)', qty: '2', cat: 'Pantry' },
+      { item: 'Carrot', qty: '1', cat: 'Produce' },
+      { item: 'Red cabbage', qty: '¼ small head', cat: 'Produce' },
+      { item: 'Red bell pepper', qty: '½', cat: 'Produce' },
+      { item: 'Celery', qty: '1 rib', cat: 'Produce' },
+      { item: 'Green onions', qty: '2', cat: 'Produce' },
+      { item: 'Romaine or mixed lettuce', qty: '1 cup', cat: 'Produce' },
+      { item: 'Dijon mustard', qty: 'small jar', cat: 'Pantry' },
+    ],
+    steps: [
+      'Drain and rinse chickpeas. Smash with a fork in a bowl — leave some texture.',
+      'Mix in thinly sliced celery, sliced green onions, 3 tbsp avocado oil mayo, ½ tbsp Dijon mustard, ½ tbsp apple cider vinegar, a pinch of celery seed, and salt. Taste and adjust.',
+      'Spread hummus on each whole wheat tortilla, leaving a 1-inch border.',
+      'Layer chickpea mixture, then shredded carrot, sliced red cabbage, sliced red pepper, chopped lettuce. Add pepperoncini if you have them.',
+      'Fold sides in, roll from the bottom. Slice in half. Wrap in parchment (not plastic) if storing — keeps 1 day in fridge.'
+    ],
+    mod: 'Use avocado oil mayo (Chosen Foods or Primal Kitchen) — same flavour as regular mayo, better fat profile.'
+  },
+];
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+let selected = new Set();
+let checkedItems = new Set();
+
+// ══════════════════════════════════
+// TABS
+// ══════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  window.scrollTo(0, 0);
+  if (tab === 'shop') renderShop();
+  if (tab === 'cook') renderCook();
+}
+
+// ══════════════════════════════════
+// PLAN
+// ══════════════════════════════════
+function renderPlan() {
+  const categories = ['Slow Cooker', 'Sheet Pan', 'Stovetop', 'No Cook'];
+  const container = document.getElementById('meal-list');
+  container.innerHTML = '';
+
+  categories.forEach(cat => {
+    const meals = MEALS.filter(m => m.category === cat);
+    if (!meals.length) return;
+
+    const label = document.createElement('div');
+    label.className = 'category-label';
+    label.textContent = cat;
+    container.appendChild(label);
+
+    meals.forEach(meal => {
+      const tile = document.createElement('div');
+      tile.className = 'meal-tile' + (selected.has(meal.id) ? ' selected' : '');
+      tile.innerHTML = `
+        <div class="meal-tile-emoji">${meal.emoji}</div>
+        <div class="meal-tile-info">
+          <div class="meal-tile-name">${meal.name}</div>
+          <div class="meal-tile-meta">${meal.method} · ${meal.time}</div>
+        </div>
+        <div class="meal-tile-check">${selected.has(meal.id) ? '✓' : ''}</div>
+      `;
+      tile.onclick = () => toggleMeal(meal.id);
+      container.appendChild(tile);
+    });
+  });
+
+  updateCount();
+}
+
+function toggleMeal(id) {
+  if (selected.has(id)) {
+    selected.delete(id);
+  } else {
+    selected.add(id);
+  }
+  renderPlan();
+}
+
+function clearAll() {
+  selected.clear();
+  checkedItems.clear();
+  renderPlan();
+}
+
+function updateCount() {
+  const el = document.getElementById('selected-count');
+  const n = selected.size;
+  el.innerHTML = n === 0 ? 'No meals selected yet'
+    : `<strong>${n} meal${n > 1 ? 's' : ''}</strong> selected this week`;
+}
+
+// ══════════════════════════════════
+// SHOP
+// ══════════════════════════════════
+
+// Normalize ingredient names for deduplication:
+// strips trailing 's', lowercases, trims whitespace
+function normalizeIngredient(name) {
+  return name.toLowerCase().trim().replace(/s$/, '');
+}
+
+// Canonical unit map — plurals and variants → singular canonical form
+const UNIT_CANON = {
+  'cup': 'cup', 'cups': 'cup',
+  'tbsp': 'tbsp', 'tablespoon': 'tbsp', 'tablespoons': 'tbsp',
+  'tsp': 'tsp', 'teaspoon': 'tsp', 'teaspoons': 'tsp',
+  'oz': 'oz', 'ounce': 'oz', 'ounces': 'oz',
+  'lb': 'lb', 'lbs': 'lb', 'pound': 'lb', 'pounds': 'lb',
+  'g': 'g', 'kg': 'kg', 'ml': 'ml', 'l': 'l',
+  'can': 'can', 'cans': 'can',
+  'jar': 'jar', 'jars': 'jar',
+  'bunch': 'bunch', 'bunches': 'bunch',
+  'pint': 'pint', 'pints': 'pint',
+  'rib': 'rib', 'ribs': 'rib',
+  'clove': 'clove', 'cloves': 'clove',
+  'sprig': 'sprig', 'sprigs': 'sprig',
+  'inch': 'inch', 'inches': 'inch',
+  'head': 'head', 'heads': 'head',
+};
+
+// Parse a qty string into { value, unit, sizeNote, raw }
+// sizeNote captures things like "28 oz" from "1 × 28 oz can" or "14 oz" from "1 can (14 oz)"
+function parseQty(qtyStr) {
+  if (!qtyStr) return { value: null, unit: '', sizeNote: '', raw: qtyStr };
+  const s = qtyStr.trim();
+
+  // Fraction map
+  const fractions = { '¼': 0.25, '½': 0.5, '¾': 0.75, '⅓': 0.333, '⅔': 0.667 };
+
+  // Extract size note from formats like "1 × 28 oz can" or "1 can (28 oz)"
+  let sizeNote = '';
+  let workStr = s;
+  const crossMatch = s.match(/^([\d.½¼¾⅓⅔]+)\s*[×x]\s*([\d.]+\s*oz)\s*(\w+)?/i);
+  const parenMatch = s.match(/^(.+?)\s*\(([\d.]+\s*oz)\)/);
+  if (crossMatch) {
+    sizeNote = crossMatch[2].trim(); // e.g. "28 oz"
+    workStr = crossMatch[1].trim() + (crossMatch[3] ? ' ' + crossMatch[3] : ' can');
+  } else if (parenMatch) {
+    sizeNote = parenMatch[2].trim();
+    workStr = parenMatch[1].trim();
+  }
+
+  // Replace unicode fractions with decimals
+  let normalized = workStr;
+  for (const [frac, val] of Object.entries(fractions)) {
+    normalized = normalized.replace(frac, val + ' ');
+  }
+
+  // Try to extract a leading number
+  const match = normalized.match(/^([\d.]+(?:\s*[\d.]+)?)\s*(.*)$/);
+  if (!match) return { value: null, unit: '', sizeNote, raw: s };
+
+  const numParts = match[1].trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
+  const value = numParts.reduce((a, b) => a + b, 0);
+
+  // Canonicalize unit
+  const rawUnit = match[2].trim();
+  const unitWord = rawUnit.toLowerCase().split(/\s+/)[0];
+  const unit = UNIT_CANON[unitWord] || '';
+
+  return { value, unit, sizeNote, raw: s };
+}
+
+// Format a combined qty back to a readable string
+// sizeNote (e.g. "28 oz") is appended in parens when present
+function formatQty(value, unit, sizeNote) {
+  const v = Math.round(value * 100) / 100;
+  const fracMap = [[0.25,'¼'],[0.333,'⅓'],[0.5,'½'],[0.667,'⅔'],[0.75,'¾']];
+  let numStr = String(v);
+  const whole = Math.floor(v);
+  const frac = Math.round((v - whole) * 1000) / 1000;
+  for (const [fv, fs] of fracMap) {
+    if (Math.abs(frac - fv) < 0.02) {
+      numStr = whole > 0 ? `${whole} ${fs}` : fs;
+      break;
+    }
+  }
+  const base = unit ? `${numStr} ${unit}` : numStr;
+  return sizeNote ? `${base} (${sizeNote})` : base;
+}
+
+function renderShop() {
+  const container = document.getElementById('shop-content');
+
+  if (selected.size === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🛒</div>
+        <div class="empty-state-title">No meals selected</div>
+        <p>Go to the Plan tab and tap the meals you're making this week.</p>
+      </div>`;
+    return;
+  }
+
+  const selectedMeals = MEALS.filter(m => selected.has(m.id));
+
+  // Consolidate ingredients with smart aggregation
+  // byCategory: cat → array of { item, qty, id }
+  // ingMap: normalizedKey → { item, cat, parsed, count, displayQty }
+  const byCategory = {};
+  const ingMap = {};
+
+  selectedMeals.forEach(meal => {
+    meal.ingredients.forEach(ing => {
+      const key = normalizeIngredient(ing.item);
+      if (!ingMap[key]) {
+        // First occurrence — store as-is
+        const parsed = parseQty(ing.qty);
+        ingMap[key] = {
+          item: ing.item,
+          cat: ing.cat,
+          value: parsed.value,
+          unit: parsed.unit,
+          sizeNote: parsed.sizeNote,
+          raw: ing.qty,
+        };
+        if (!byCategory[ing.cat]) byCategory[ing.cat] = [];
+        byCategory[ing.cat].push(key);
+      } else {
+        // Duplicate — try to aggregate
+        const existing = ingMap[key];
+        const parsed = parseQty(ing.qty);
+
+        if (existing.value !== null && parsed.value !== null && existing.unit === parsed.unit) {
+          // Compatible units — add the values
+          existing.value += parsed.value;
+          // Keep sizeNote from first occurrence if consistent; clear if they differ
+          if (parsed.sizeNote && parsed.sizeNote !== existing.sizeNote) {
+            existing.sizeNote = existing.sizeNote || parsed.sizeNote;
+          }
+        } else if (existing.value !== null && parsed.value !== null && existing.unit === '' && parsed.unit === '') {
+          existing.value += parsed.value;
+        } else {
+          // Can't cleanly aggregate — fall back to raw text
+          if (!existing.raw.includes(ing.qty)) {
+            existing.raw = existing.raw + ' + ' + ing.qty;
+          }
+          existing.value = null;
+        }
+      }
+    });
+  });
+
+  // Build display qty for each ingredient
+  for (const key of Object.keys(ingMap)) {
+    const ing = ingMap[key];
+    if (ing.value !== null) {
+      ing.displayQty = formatQty(ing.value, ing.unit, ing.sizeNote);
+    } else {
+      ing.displayQty = ing.raw;
+    }
+  }
+
+  const catOrder = ['Protein', 'Produce', 'Dairy', 'Pantry'];
+
+  let html = `
+    <div class="shop-meals-used">
+      <div class="shop-meals-title">Meals this week</div>
+      ${selectedMeals.map(m => `<span class="shop-meal-tag">${m.emoji} ${m.name}</span>`).join('')}
+    </div>
+    <div class="staples-note">
+      <strong>Always check:</strong>
+      Olive oil · Low-sodium soy sauce · Brown rice · Low-sodium broth · Greek yogurt · Garlic · Onions — restock if running low.
+    </div>
+  `;
+
+  catOrder.forEach(cat => {
+    if (!byCategory[cat] || !byCategory[cat].length) return;
+    html += `
+      <div class="shop-section">
+        <div class="shop-section-title">${cat}</div>
+        <div class="shop-card">
+          ${byCategory[cat].map(key => {
+            const ing = ingMap[key];
+            const id = key;
+            return `
+              <div class="shop-item${checkedItems.has(id) ? ' checked' : ''}" onclick="toggleShopItem('${id}', this)">
+                <div class="shop-item-check">${checkedItems.has(id) ? '✓' : ''}</div>
+                <div class="shop-item-text">${ing.item}</div>
+                <div class="shop-item-qty">${ing.displayQty}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  });
+
+  // Milo's salad staples
+  html += `
+    <div class="shop-section">
+      <div class="shop-section-title">Milo's Salad (check weekly)</div>
+      <div class="shop-card">
+        ${[
+          { item: 'Chicken breasts (for batch cooking)', qty: '2', id: 'milo-chicken' },
+          { item: 'Cucumber', qty: '2', id: 'milo-cucumber' },
+          { item: 'Organic raw sauerkraut (refrigerated)', qty: '1 jar', id: 'milo-sauerkraut' },
+        ].map(ing => `
+          <div class="shop-item${checkedItems.has(ing.id) ? ' checked' : ''}" onclick="toggleShopItem('${ing.id}', this)">
+            <div class="shop-item-check">${checkedItems.has(ing.id) ? '✓' : ''}</div>
+            <div class="shop-item-text">${ing.item}</div>
+            <div class="shop-item-qty">${ing.qty}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+function toggleShopItem(id, el) {
+  if (checkedItems.has(id)) {
+    checkedItems.delete(id);
+    el.classList.remove('checked');
+    el.querySelector('.shop-item-check').textContent = '';
+  } else {
+    checkedItems.add(id);
+    el.classList.add('checked');
+    el.querySelector('.shop-item-check').textContent = '✓';
+  }
+}
+
+// ══════════════════════════════════
+// COOK
+// ══════════════════════════════════
+function renderCook() {
+  const container = document.getElementById('cook-content');
+
+  if (selected.size === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">👩‍🍳</div>
+        <div class="empty-state-title">No meals selected</div>
+        <p>Go to the Plan tab and pick this week's meals to see the recipes here.</p>
+      </div>`;
+    return;
+  }
+
+  const selectedMeals = MEALS.filter(m => selected.has(m.id));
+
+  container.innerHTML = selectedMeals.map(meal => `
+    <div class="recipe-card" id="card-${meal.id}">
+      <div class="recipe-card-header" onclick="toggleRecipe('${meal.id}')">
+        <div class="recipe-card-emoji">${meal.emoji}</div>
+        <div>
+          <div class="recipe-card-name">${meal.name}</div>
+          <div class="recipe-card-meta">
+            <span>${meal.method}</span>
+            <span>· ${meal.time}</span>
+          </div>
+        </div>
+        <div class="recipe-expand-icon">⌄</div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-section-label">Ingredients</div>
+        <ul class="ingredients-list">
+          ${meal.ingredients.map(ing => `
+            <li>
+              <span>${ing.item}</span>
+              <span class="ing-qty">${ing.qty}</span>
+            </li>
+          `).join('')}
+        </ul>
+
+        <div class="recipe-section-label">Steps</div>
+        <ol class="steps-list">
+          ${meal.steps.map((step, i) => `
+            <div class="step">
+              <div class="step-num">${i + 1}</div>
+              <div class="step-text">${step}</div>
+            </div>
+          `).join('')}
+        </ol>
+
+        ${meal.mod ? `
+          <div class="mod-callout">
+            <span class="mod-callout-icon">⚠️</span>
+            <span>${meal.mod}</span>
+          </div>
+        ` : ''}
+
+        ${meal.miloNote ? `
+          <div class="milo-callout">
+            <span class="milo-callout-icon">🎣</span>
+            <span><strong>Milo's note:</strong> ${meal.miloNote}</span>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleRecipe(id) {
+  document.getElementById('card-' + id).classList.toggle('open');
+}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+renderPlan();
+</script>
+</body>
+</html>
