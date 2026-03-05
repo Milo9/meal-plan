@@ -970,6 +970,25 @@ let selected = new Set();
 let checkedItems = new Set();
 
 // ══════════════════════════════════
+// PERSISTENCE
+// ══════════════════════════════════
+function saveState() {
+  try {
+    localStorage.setItem('mp-selected', JSON.stringify([...selected]));
+    localStorage.setItem('mp-checked', JSON.stringify([...checkedItems]));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('mp-selected');
+    const c = localStorage.getItem('mp-checked');
+    if (s) selected = new Set(JSON.parse(s));
+    if (c) checkedItems = new Set(JSON.parse(c));
+  } catch(e) {}
+}
+
+// ══════════════════════════════════
 // TABS
 // ══════════════════════════════════
 function switchTab(tab) {
@@ -1024,12 +1043,15 @@ function toggleMeal(id) {
   } else {
     selected.add(id);
   }
+  saveState();
   renderPlan();
 }
 
 function clearAll() {
+  if (!confirm('Start fresh for next week? This will clear your meal selections and shopping list.')) return;
   selected.clear();
   checkedItems.clear();
+  saveState();
   renderPlan();
 }
 
@@ -1270,6 +1292,7 @@ function toggleShopItem(id, el) {
     el.classList.add('checked');
     el.querySelector('.shop-item-check').textContent = '✓';
   }
+  saveState();
 }
 
 // ══════════════════════════════════
@@ -1349,6 +1372,7 @@ function toggleRecipe(id) {
 // ══════════════════════════════════
 // INIT
 // ══════════════════════════════════
+loadState();
 renderPlan();
 </script>
 </body>
