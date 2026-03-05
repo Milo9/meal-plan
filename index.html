@@ -1395,22 +1395,7 @@ function renderCook() {
 
   const selectedMeals = MEALS.filter(m => selected.has(m.id));
 
-  const banner = `
-    <div class="cook-banner">
-      <div class="cook-banner-title">On the menu this week</div>
-      <div class="cook-banner-methods">
-        ${selectedMeals.map(m => `
-          <div class="cook-banner-row">
-            <span class="cook-banner-emoji">${m.emoji}</span>
-            <span class="cook-banner-name">${m.name}</span>
-            <span class="cook-banner-method">${m.method}</span>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-
-  container.innerHTML = banner + selectedMeals.map(meal => `
+  container.innerHTML = selectedMeals.map(meal => `
     <div class="recipe-card" id="card-${meal.id}">
       <div class="recipe-card-header" onclick="toggleRecipe('${meal.id}')">
         <div class="recipe-card-emoji">${meal.emoji}</div>
