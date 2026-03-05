@@ -540,6 +540,209 @@ html, body {
 }
 .btn-uncheck:active { opacity: 0.7; }
 
+/* ── PANTRY SCREEN ── */
+.pantry-content { padding: 20px 16px 0; }
+
+.pantry-intro {
+  background: var(--amber-pale);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--amber);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pantry-intro-icon { font-size: 20px; flex-shrink: 0; }
+
+.pantry-section { margin-bottom: 20px; }
+
+.pantry-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+.pantry-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.pantry-section-delete {
+  font-size: 11px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.5;
+}
+
+.pantry-card {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+
+.pantry-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--bg);
+  gap: 12px;
+}
+.pantry-item:last-child { border-bottom: none; }
+
+.pantry-item-flag {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+}
+.pantry-item.needs-restock .pantry-item-flag {
+  background: var(--amber-pale);
+  border-color: var(--amber);
+}
+
+.pantry-item-name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--ink);
+}
+.pantry-item.needs-restock .pantry-item-name {
+  color: var(--amber);
+  font-weight: 500;
+}
+
+.pantry-item-restock-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: var(--amber-pale);
+  border-radius: 999px;
+  padding: 2px 8px;
+  display: none;
+}
+.pantry-item.needs-restock .pantry-item-restock-badge { display: block; }
+
+.pantry-item-remove {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.pantry-item-remove:active { background: var(--border); }
+
+.pantry-add-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.pantry-add-input {
+  flex: 1;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.pantry-add-input:focus { border-color: var(--amber); }
+.pantry-add-input::placeholder { color: var(--muted); }
+.pantry-add-btn {
+  background: var(--amber);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.pantry-add-btn:active { opacity: 0.8; }
+
+.pantry-new-section {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+.pantry-new-section-input {
+  flex: 1;
+  background: transparent;
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  color: var(--muted);
+  outline: none;
+}
+.pantry-new-section-input:focus { border-color: var(--amber); color: var(--ink); }
+.pantry-new-section-input::placeholder { color: var(--muted); }
+.pantry-new-section-btn {
+  background: transparent;
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+.pantry-new-section-btn:active { opacity: 0.7; }
+
+.pantry-restock-summary {
+  background: var(--amber-pale);
+  border-left: 3px solid var(--amber);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: none;
+}
+.pantry-restock-summary.visible { display: block; }
+.pantry-restock-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+.pantry-restock-items {
+  font-size: 13px;
+  color: #7A4A10;
+  line-height: 1.7;
+}
+
 </style>
 </head>
 <body>
@@ -557,6 +760,10 @@ html, body {
   <div class="tab" onclick="switchTab('cook')" id="tab-cook">
     <span class="tab-icon">👩‍🍳</span>
     <span>Cook</span>
+  </div>
+  <div class="tab" onclick="switchTab('pantry')" id="tab-pantry">
+    <span class="tab-icon">🥫</span>
+    <span>Pantry</span>
   </div>
 </div>
 
@@ -597,6 +804,18 @@ html, body {
   </div>
 
   <div class="shop-content" id="shop-content"></div>
+</div>
+
+<!-- ══════════════════════════════════
+     PANTRY SCREEN
+══════════════════════════════════ -->
+<div class="screen" id="screen-pantry">
+  <div class="screen-header">
+    <div class="screen-label">Stock Check</div>
+    <div class="screen-title">Pantry<br><em>tracker</em></div>
+    <div class="screen-sub">Tap 🛒 to flag items for restock</div>
+  </div>
+  <div class="pantry-content" id="pantry-content"></div>
 </div>
 
 <!-- ══════════════════════════════════
@@ -1064,6 +1283,7 @@ function switchTab(tab, restoreScroll) {
   document.getElementById('tab-' + tab).classList.add('active');
   if (tab === 'shop') renderShop();
   if (tab === 'cook') renderCook();
+  if (tab === 'pantry') renderPantry();
   if (restoreScroll) {
     try {
       const y = parseInt(localStorage.getItem('mp-scroll') || '0', 10);
@@ -1307,10 +1527,7 @@ function renderShop() {
       <div class="shop-meals-title">Meals this week</div>
       ${selectedMeals.map(m => `<span class="shop-meal-tag">${m.emoji} ${m.name}</span>`).join('')}
     </div>
-    <div class="staples-note">
-      <strong>Always check:</strong>
-      Olive oil · Low-sodium soy sauce · Brown rice · Low-sodium broth · Greek yogurt · Garlic · Onions — restock if running low.
-    </div>
+
   `;
 
   catOrder.forEach(cat => {
@@ -1375,6 +1592,182 @@ function toggleShopItem(id, el) {
     el.querySelector('.shop-item-check').textContent = '✓';
   }
   saveState();
+}
+
+// ══════════════════════════════════
+// PANTRY
+// ══════════════════════════════════
+
+const PANTRY_DEFAULTS = [
+  {
+    id: 'oils-sauces',
+    name: 'Oils & Sauces',
+    items: [
+      { id: 'p1', name: 'Low-sodium chicken broth', restock: false },
+      { id: 'p2', name: 'Low-sodium vegetable broth', restock: false },
+      { id: 'p3', name: 'Low-sodium soy sauce', restock: false },
+    ]
+  },
+  {
+    id: 'spices',
+    name: 'Spices',
+    items: [
+      { id: 'p10', name: 'Chili powder', restock: false },
+      { id: 'p11', name: 'Garlic powder', restock: false },
+      { id: 'p12', name: 'Paprika', restock: false },
+    ]
+  },
+  {
+    id: 'dry-goods',
+    name: 'Dry Goods',
+    items: [
+      { id: 'p30', name: 'Brown rice', restock: false },
+      { id: 'p31', name: 'Quinoa', restock: false },
+    ]
+  },
+  {
+    id: 'condiments',
+    name: 'Condiments',
+    items: [
+      { id: 'p40', name: 'Dijon mustard', restock: false },
+      { id: 'p41', name: 'Tahini', restock: false },
+      { id: 'p42', name: 'Rice vinegar', restock: false },
+    ]
+  },
+];
+
+// pantryData: array of { id, name, items: [{ id, name, restock }] }
+let pantryData = [];
+
+function savePantry() {
+  try { localStorage.setItem('mp-pantry', JSON.stringify(pantryData)); } catch(e) {}
+}
+
+function loadPantry() {
+  try {
+    const raw = localStorage.getItem('mp-pantry');
+    if (raw) {
+      pantryData = JSON.parse(raw);
+    } else {
+      pantryData = JSON.parse(JSON.stringify(PANTRY_DEFAULTS)); // deep clone
+    }
+  } catch(e) {
+    pantryData = JSON.parse(JSON.stringify(PANTRY_DEFAULTS));
+  }
+}
+
+function pantryNextId() {
+  return 'px' + Date.now();
+}
+
+function pantryToggleRestock(sectionId, itemId) {
+  const sec = pantryData.find(s => s.id === sectionId);
+  if (!sec) return;
+  const item = sec.items.find(i => i.id === itemId);
+  if (item) item.restock = !item.restock;
+  savePantry();
+  renderPantry();
+}
+
+function pantryRemoveItem(sectionId, itemId) {
+  const sec = pantryData.find(s => s.id === sectionId);
+  if (!sec) return;
+  sec.items = sec.items.filter(i => i.id !== itemId);
+  savePantry();
+  renderPantry();
+}
+
+function pantryAddItem(sectionId) {
+  const input = document.getElementById('pantry-add-' + sectionId);
+  const name = input.value.trim();
+  if (!name) return;
+  const sec = pantryData.find(s => s.id === sectionId);
+  if (!sec) return;
+  sec.items.push({ id: pantryNextId(), name, restock: false });
+  input.value = '';
+  savePantry();
+  renderPantry();
+}
+
+function pantryAddSection() {
+  const input = document.getElementById('pantry-new-section-input');
+  const name = input.value.trim();
+  if (!name) return;
+  pantryData.push({ id: pantryNextId(), name, items: [] });
+  input.value = '';
+  savePantry();
+  renderPantry();
+}
+
+function pantryRemoveSection(sectionId) {
+  const sec = pantryData.find(s => s.id === sectionId);
+  if (!sec) return;
+  if (sec.items.length > 0) {
+    if (!confirm(`Remove the “${sec.name}” section and all its items?`)) return;
+  }
+  pantryData = pantryData.filter(s => s.id !== sectionId);
+  savePantry();
+  renderPantry();
+}
+
+function renderPantry() {
+  const container = document.getElementById('pantry-content');
+
+  const restockItems = [];
+  pantryData.forEach(sec => {
+    sec.items.forEach(item => {
+      if (item.restock) restockItems.push(item.name);
+    });
+  });
+
+  let html = `
+    <div class="pantry-intro">
+      <span class="pantry-intro-icon">🛒</span>
+      <span>Tap the circle next to any item to flag it for restock. Flags persist week to week.</span>
+    </div>
+    <div class="pantry-restock-summary${restockItems.length ? ' visible' : ''}">
+      <div class="pantry-restock-title">Need to restock (${restockItems.length})</div>
+      <div class="pantry-restock-items">${restockItems.join(' · ')}</div>
+    </div>
+  `;
+
+  pantryData.forEach(sec => {
+    html += `
+      <div class="pantry-section">
+        <div class="pantry-section-header">
+          <div class="pantry-section-title">${sec.name}</div>
+          <button class="pantry-section-delete" onclick="pantryRemoveSection('${sec.id}')">Remove section</button>
+        </div>
+        <div class="pantry-card">
+          ${sec.items.map(item => `
+            <div class="pantry-item${item.restock ? ' needs-restock' : ''}">
+              <button class="pantry-item-flag" onclick="pantryToggleRestock('${sec.id}', '${item.id}')">
+                ${item.restock ? '🛒' : ''}
+              </button>
+              <span class="pantry-item-name">${item.name}</span>
+              <span class="pantry-item-restock-badge">restock</span>
+              <button class="pantry-item-remove" onclick="pantryRemoveItem('${sec.id}', '${item.id}')">×</button>
+            </div>
+          `).join('')}
+        </div>
+        <div class="pantry-add-row">
+          <input class="pantry-add-input" id="pantry-add-${sec.id}" type="text" placeholder="Add item…"
+            onkeydown="if(event.key==='Enter') pantryAddItem('${sec.id}')">
+          <button class="pantry-add-btn" onclick="pantryAddItem('${sec.id}')">Add</button>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+    <div class="pantry-new-section">
+      <input class="pantry-new-section-input" id="pantry-new-section-input" type="text" placeholder="+ New section (e.g. Baking)…"
+        onkeydown="if(event.key==='Enter') pantryAddSection()">
+      <button class="pantry-new-section-btn" onclick="pantryAddSection()">Add</button>
+    </div>
+  `;
+
+  container.innerHTML = html;
 }
 
 // ══════════════════════════════════
@@ -1466,6 +1859,7 @@ try {
 } catch(e) {}
 
 loadState();
+loadPantry();
 renderPlan();
 
 // Restore last active tab and scroll
