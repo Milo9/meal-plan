@@ -979,6 +979,14 @@ function saveState() {
   } catch(e) {}
 }
 
+function saveTab(tab) {
+  try { localStorage.setItem('mp-tab', tab); } catch(e) {}
+}
+
+function saveScroll() {
+  try { localStorage.setItem('mp-scroll', window.scrollY); } catch(e) {}
+}
+
 function loadState() {
   try {
     const s = localStorage.getItem('mp-selected');
@@ -991,14 +999,22 @@ function loadState() {
 // ══════════════════════════════════
 // TABS
 // ══════════════════════════════════
-function switchTab(tab) {
+function switchTab(tab, restoreScroll) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('screen-' + tab).classList.add('active');
   document.getElementById('tab-' + tab).classList.add('active');
-  window.scrollTo(0, 0);
   if (tab === 'shop') renderShop();
   if (tab === 'cook') renderCook();
+  if (restoreScroll) {
+    try {
+      const y = parseInt(localStorage.getItem('mp-scroll') || '0', 10);
+      window.scrollTo(0, y);
+    } catch(e) { window.scrollTo(0, 0); }
+  } else {
+    window.scrollTo(0, 0);
+  }
+  saveTab(tab);
 }
 
 // ══════════════════════════════════
@@ -1374,6 +1390,15 @@ function toggleRecipe(id) {
 // ══════════════════════════════════
 loadState();
 renderPlan();
+
+// Restore last active tab and scroll
+try {
+  const lastTab = localStorage.getItem('mp-tab') || 'plan';
+  switchTab(lastTab, true);
+} catch(e) { switchTab('plan', false); }
+
+// Save scroll position continuously
+window.addEventListener('scroll', saveScroll, { passive: true });
 </script>
 </body>
 </html>
