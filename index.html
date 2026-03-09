@@ -724,9 +724,9 @@ html, body {
   background: var(--amber-pale);
   border-left: 3px solid var(--amber);
   border-radius: 14px;
-  padding: 14px 16px;
   margin-bottom: 20px;
   display: none;
+  overflow: hidden;
 }
 .pantry-restock-summary.visible { display: block; }
 .pantry-restock-title {
@@ -735,12 +735,47 @@ html, body {
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--amber);
-  margin-bottom: 6px;
+  padding: 14px 16px 10px;
 }
-.pantry-restock-items {
+.pantry-restock-list {
+  list-style: none;
+}
+.pantry-restock-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 16px;
+  border-top: 1px solid rgba(196,130,26,0.15);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.pantry-restock-row:active { background: rgba(196,130,26,0.1); }
+.pantry-restock-row.got-it { opacity: 0.45; }
+.pantry-restock-check {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--amber);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 13px;
+  color: transparent;
+  transition: all 0.2s;
+}
+.pantry-restock-row.got-it .pantry-restock-check {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #fff;
+}
+.pantry-restock-row-name {
+  flex: 1;
+  font-size: 14px;
   color: #7A4A10;
-  line-height: 1.7;
+}
+.pantry-restock-row.got-it .pantry-restock-row-name {
+  text-decoration: line-through;
+  text-decoration-color: var(--amber);
 }
 
 </style>
@@ -923,9 +958,8 @@ const MEALS = [
     time: '10 min prep · 45 min cook',
     miloNote: null,
     ingredients: [
-      { item: 'Brown or green lentils', qty: '1 cup', cat: 'Pantry' },
       { item: 'Diced tomatoes (28 oz, lightly drained)', qty: '1 large can', cat: 'Pantry' },
-      { item: 'Low-sodium vegetable broth', qty: '4 cups', cat: 'Pantry' },
+      { item: 'Vegetable broth', qty: '4 cups', cat: 'Pantry' },
       { item: 'Yellow onion', qty: '1 medium', cat: 'Produce' },
       { item: 'Carrots', qty: '2', cat: 'Produce' },
       { item: 'Garlic cloves', qty: '4', cat: 'Produce' },
@@ -935,7 +969,7 @@ const MEALS = [
     steps: [
       'Warm ¼ cup olive oil in a large pot over medium heat. Add chopped onion and carrots. Cook stirring often until onion is translucent, about 5 minutes.',
       'Add minced garlic, 2 tsp cumin, 1 tsp curry powder, and ½ tsp dried thyme. Cook 30 seconds, stirring constantly. Add lightly drained diced tomatoes and cook a few more minutes, stirring often.',
-      'Add lentils, broth, and 2 cups water. Season with 1 tsp salt, a pinch of red pepper flakes, and generous black pepper. Bring to a boil, then reduce to a gentle simmer. Partially cover and cook 25–30 minutes until lentils are tender but still hold their shape.',
+      'Add lentils, broth, and 2 cups water. Season with a pinch of red pepper flakes and generous black pepper. Bring to a boil, then reduce to a gentle simmer. Partially cover and cook 25–30 minutes until lentils are tender but still hold their shape.',
       'Transfer 2 cups of soup to a blender. Blend until smooth, then pour back into the pot. (Or use an immersion blender to blend a portion of the soup.) This gives creamy texture without any cream.',
       'Add chopped collard greens or kale. Cook 5 more minutes until greens have softened.',
       'Remove from heat. Stir in 1 tbsp lemon juice. Taste and adjust with more salt, pepper, and/or lemon. Serve hot. Freezes well for several months.'
@@ -1764,24 +1798,52 @@ function pantryRemoveSection(sectionId) {
   renderPantry();
 }
 
+// Track which restock items have been ticked off during this shopping trip
+let pantryShopChecked = new Set();
+
+function pantryShopCheck(sectionId, itemId) {
+  const key = sectionId + '|' + itemId;
+  if (pantryShopChecked.has(key)) {
+    pantryShopChecked.delete(key);
+  } else {
+    pantryShopChecked.add(key);
+    // Un-flag restock after a short delay so user sees the tick first
+    setTimeout(() => {
+      pantryToggleRestock(sectionId, itemId);
+      pantryShopChecked.delete(key);
+    }, 600);
+  }
+  renderPantry();
+}
+
 function renderPantry() {
   const container = document.getElementById('pantry-content');
 
   const restockItems = [];
   pantryData.forEach(sec => {
     sec.items.forEach(item => {
-      if (item.restock) restockItems.push(item.name);
+      if (item.restock) restockItems.push({ sectionId: sec.id, itemId: item.id, name: item.name });
     });
   });
 
   let html = `
     <div class="pantry-intro">
       <span class="pantry-intro-icon">🛒</span>
-      <span>Tap the circle next to any item to flag it for restock. Flags persist week to week.</span>
+      <span>Flag items for restock below. Tap the list above to check them off while shopping.</span>
     </div>
     <div class="pantry-restock-summary${restockItems.length ? ' visible' : ''}">
       <div class="pantry-restock-title">Need to restock (${restockItems.length})</div>
-      <div class="pantry-restock-items">${restockItems.join(' · ')}</div>
+      <ul class="pantry-restock-list">
+        ${restockItems.map(r => {
+          const key = r.sectionId + '|' + r.itemId;
+          const checked = pantryShopChecked.has(key);
+          return `
+            <li class="pantry-restock-row${checked ? ' got-it' : ''}" onclick="pantryShopCheck('${r.sectionId}', '${r.itemId}')">
+              <div class="pantry-restock-check">${checked ? '✓' : ''}</div>
+              <span class="pantry-restock-row-name">${r.name}</span>
+            </li>`;
+        }).join('')}
+      </ul>
     </div>
   `;
 
