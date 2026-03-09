@@ -744,6 +744,8 @@ html, body {
 }
 
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -1285,6 +1287,21 @@ const MEALS = [
 ];
 
 // ══════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyBKlBLbd_hiudcxVRYGIfsm53hzK7ozNi0",
+  authDomain: "meal-plan-ddc43.firebaseapp.com",
+  databaseURL: "https://meal-plan-ddc43-default-rtdb.firebaseio.com",
+  projectId: "meal-plan-ddc43",
+  storageBucket: "meal-plan-ddc43.firebasestorage.app",
+  messagingSenderId: "507484569553",
+  appId: "1:507484569553:web:8c2f5670ff042fb970aaf0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ══════════════════════════════════
 // STATE
 // ══════════════════════════════════
 let selected = new Set();
@@ -1294,10 +1311,8 @@ let checkedItems = new Set();
 // PERSISTENCE
 // ══════════════════════════════════
 function saveState() {
-  try {
-    localStorage.setItem('mp-selected', JSON.stringify([...selected]));
-    localStorage.setItem('mp-checked', JSON.stringify([...checkedItems]));
-  } catch(e) {}
+  db.ref('state/selected').set([...selected]);
+  db.ref('state/checked').set([...checkedItems]);
 }
 
 function saveTab(tab) {
@@ -1308,13 +1323,17 @@ function saveScroll() {
   try { localStorage.setItem('mp-scroll', window.scrollY); } catch(e) {}
 }
 
-function loadState() {
-  try {
-    const s = localStorage.getItem('mp-selected');
-    const c = localStorage.getItem('mp-checked');
-    if (s) selected = new Set(JSON.parse(s));
-    if (c) checkedItems = new Set(JSON.parse(c));
-  } catch(e) {}
+// ══════════════════════════════════
+// ACTIVE TAB REFRESH (called by Firebase listeners)
+// ══════════════════════════════════
+function refreshActiveTab() {
+  const active = document.querySelector('.screen.active');
+  if (!active) return;
+  const id = active.id;
+  if (id === 'screen-shop') renderShop();
+  else if (id === 'screen-cook') renderCook();
+  else if (id === 'screen-pantry') renderPantry();
+  else renderPlan();
 }
 
 // ══════════════════════════════════
@@ -1684,20 +1703,11 @@ const PANTRY_DEFAULTS = [
 let pantryData = [];
 
 function savePantry() {
-  try { localStorage.setItem('mp-pantry', JSON.stringify(pantryData)); } catch(e) {}
+  db.ref('state/pantry').set(pantryData);
 }
 
 function loadPantry() {
-  try {
-    const raw = localStorage.getItem('mp-pantry');
-    if (raw) {
-      pantryData = JSON.parse(raw);
-    } else {
-      pantryData = JSON.parse(JSON.stringify(PANTRY_DEFAULTS)); // deep clone
-    }
-  } catch(e) {
-    pantryData = JSON.parse(JSON.stringify(PANTRY_DEFAULTS));
-  }
+  // No-op — pantry is loaded via Firebase real-time listener
 }
 
 function pantryNextId() {
@@ -1902,18 +1912,34 @@ try {
     'Week of ' + sunday.toLocaleDateString('en-CA', opts);
 } catch(e) {}
 
-loadState();
-loadPantry();
-renderPlan();
+// ── Firebase real-time listeners ──
+// Wait for all three data nodes before first render
+let _initCount = 0;
+function _onInitComplete() {
+  _initCount++;
+  if (_initCount < 3) return;
+  renderPlan();
+  try {
+    const lastTab = localStorage.getItem('mp-tab') || 'plan';
+    switchTab(lastTab, true);
+  } catch(e) { switchTab('plan', false); }
+  window.addEventListener('scroll', saveScroll, { passive: true });
+}
 
-// Restore last active tab and scroll
-try {
-  const lastTab = localStorage.getItem('mp-tab') || 'plan';
-  switchTab(lastTab, true);
-} catch(e) { switchTab('plan', false); }
+db.ref('state/selected').on('value', snap => {
+  selected = new Set(snap.val() || []);
+  if (_initCount >= 3) refreshActiveTab(); else _onInitComplete();
+});
 
-// Save scroll position continuously
-window.addEventListener('scroll', saveScroll, { passive: true });
+db.ref('state/checked').on('value', snap => {
+  checkedItems = new Set(snap.val() || []);
+  if (_initCount >= 3) refreshActiveTab(); else _onInitComplete();
+});
+
+db.ref('state/pantry').on('value', snap => {
+  pantryData = snap.val() || JSON.parse(JSON.stringify(PANTRY_DEFAULTS));
+  if (_initCount >= 3) refreshActiveTab(); else _onInitComplete();
+});
 </script>
 </body>
 </html>
