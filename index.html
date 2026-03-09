@@ -909,7 +909,7 @@ const MEALS = [
     miloNote: 'Add a salmon filet to a 400°F oven at the same time — done in 20–25 min.',
     ingredients: [
       { item: 'Bone-in chicken thighs', qty: '6–8', cat: 'Protein' },
-      { item: 'Low-sodium chicken broth', qty: '2 cups', cat: 'Pantry' },
+      { item: 'Chicken broth', qty: '2 cups', cat: 'Pantry' },
       { item: 'Sweet potato', qty: '2 large', cat: 'Produce' },
       { item: 'Carrots', qty: '3', cat: 'Produce' },
       { item: 'Celery', qty: '3 ribs', cat: 'Produce' },
@@ -1294,7 +1294,7 @@ const MEALS = [
     time: '15 min',
     miloNote: null,
     ingredients: [
-      { item: 'Chickpeas (rinsed)', qty: '1 can (15 oz)', cat: 'Pantry' },
+      { item: 'Chickpeas', qty: '1 can (15 oz)', cat: 'Pantry' },
       { item: 'Hummus', qty: '½ cup', cat: 'Pantry' },
       { item: 'Whole wheat burrito tortillas (10-inch)', qty: '2', cat: 'Pantry' },
       { item: 'Carrot', qty: '1', cat: 'Produce' },
@@ -1502,7 +1502,7 @@ function parseQty(qtyStr) {
   // Replace unicode fractions with decimals
   let normalized = workStr;
   for (const [frac, val] of Object.entries(fractions)) {
-    normalized = normalized.replace(frac, val + ' ');
+    normalized = normalized.replace(frac, ' ' + val).trim();
   }
 
   // Try to extract a leading number
