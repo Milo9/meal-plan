@@ -1999,7 +1999,22 @@ db.ref('state/checked').on('value', snap => {
 });
 
 db.ref('state/pantry').on('value', snap => {
-  pantryData = snap.val() || JSON.parse(JSON.stringify(PANTRY_DEFAULTS));
+  const raw = snap.val();
+  if (!raw) {
+    pantryData = JSON.parse(JSON.stringify(PANTRY_DEFAULTS));
+  } else {
+    // Firebase can return arrays as objects with numeric keys — normalize back to arrays
+    const toArr = v => v == null ? [] : Array.isArray(v) ? v : Object.values(v);
+    pantryData = toArr(raw).map(sec => ({
+      id: sec.id,
+      name: sec.name,
+      items: toArr(sec.items).map(item => ({
+        id: item.id,
+        name: item.name,
+        restock: !!item.restock
+      }))
+    }));
+  }
   if (_initCount >= 3) refreshActiveTab(); else _onInitComplete();
 });
 </script>
