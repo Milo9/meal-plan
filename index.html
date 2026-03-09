@@ -1213,6 +1213,48 @@ const MEALS = [
     mod: 'Use low-sodium vegetable broth — regular broth is a major sodium source. Go easy on the adobo sauce.'
   },
   {
+    id: 'raspberries',
+    name: 'Fresh Raspberries',
+    emoji: '🍓',
+    category: 'Snack',
+    method: 'No Prep',
+    time: 'Ready to eat',
+    miloNote: 'Frozen work just as well — same nutrition, cheaper. Great late-night pick.',
+    ingredients: [
+      { item: 'Raspberries (fresh or frozen)', qty: '1 pint', cat: 'Produce' },
+    ],
+    steps: [],
+    mod: null
+  },
+  {
+    id: 'blueberries',
+    name: 'Fresh Blueberries',
+    emoji: '🫐',
+    category: 'Snack',
+    method: 'No Prep',
+    time: 'Ready to eat',
+    miloNote: 'Best NAFLD fruit — strong anthocyanin evidence for liver health. Frozen mixed berries from Costco are ideal.',
+    ingredients: [
+      { item: 'Blueberries (fresh or frozen)', qty: '1 pint', cat: 'Produce' },
+    ],
+    steps: [],
+    mod: null
+  },
+  {
+    id: 'edamame',
+    name: 'Frozen Edamame',
+    emoji: '🫘',
+    category: 'Snack',
+    method: 'Microwave',
+    time: '5 min',
+    miloNote: 'High protein + fibre — unusually satiating. Microwave in bag, lightly salt.',
+    ingredients: [
+      { item: 'Frozen edamame (in shell)', qty: '1 bag', cat: 'Produce' },
+    ],
+    steps: [],
+    mod: null
+  },
+  {
     id: 'veggie-wrap',
     name: 'Chickpea Veggie Wrap',
     emoji: '🌯',
@@ -1303,7 +1345,7 @@ function switchTab(tab, restoreScroll) {
 // PLAN
 // ══════════════════════════════════
 function renderPlan() {
-  const categories = ['Slow Cooker', 'Sheet Pan', 'Stovetop', 'No Cook'];
+  const categories = ['Slow Cooker', 'Sheet Pan', 'Stovetop', 'No Cook', 'Snack'];
   const container = document.getElementById('meal-list');
   container.innerHTML = '';
 
@@ -1790,7 +1832,7 @@ function renderCook() {
     return;
   }
 
-  const selectedMeals = MEALS.filter(m => selected.has(m.id));
+  const selectedMeals = MEALS.filter(m => selected.has(m.id) && m.category !== 'Snack');
 
   container.innerHTML = selectedMeals.map(meal => `
     <div class="recipe-card" id="card-${meal.id}">
