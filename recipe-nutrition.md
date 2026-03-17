@@ -13,6 +13,30 @@ https://raw.githubusercontent.com/Milo9/meal-plan/refs/heads/main/recipe-nutriti
 
 ---
 
+## Condiments & Common Ingredients
+
+Label-accurate values. Serving sizes reflect typical use. Add these ad-hoc when logging meals.
+
+### Condiments
+
+| Item | Serving | Cal | Protein | Carbs | Fibre | Sat Fat | Sodium |
+|---|---|---|---|---|---|---|---|
+| Lee Kum Kee Less Sodium Soy Sauce | 1 tbsp (15mL) | 10 | 1g | 1g | 0g | 0g | 530mg |
+| Naked & Saucy Creamy O.G. Dressing | 2 tbsp (30mL) | 52 | 1g | 3g | 1g | 0g | 260mg |
+| Hikari Organic White Miso | 1 tbsp (18g) | 35 | 2g | 4g | 1g | 0.2g | 820mg |
+| Hikari Organic Miso Mild Sodium | 1 tbsp (18g) | 35 | 2g | 5g | 1g | 0.2g | 590mg |
+| Naturally Amped Dill Pickle Kraut | 2 tbsp (30g) | 5 | 0.3g | 1g | 0g | 0g | 230mg |
+| Naturally Amped Fiesta Kraut | 2 tbsp (30g) | 5 | 0.3g | 2g | 0g | 0g | 230mg |
+| Ajinomoto Hondashi Bonito Seasoning | 1 tsp (1g) | 0 | 0.2g | 0g | 0g | 0g | 180mg |
+
+### Beverages
+
+| Item | Serving | Cal | Protein | Carbs | Fibre | Sat Fat | Sodium |
+|---|---|---|---|---|---|---|---|
+| RW Knudsen Just Tart Cherry Juice | 1 cup (250mL) | 140 | 1g | 33g | 0g | 0g | 15mg |
+
+---
+
 ## Recipes
 
 ### Easy Veggie Wrap (Milo's version)
