@@ -9,7 +9,7 @@ All values are estimates. Label-accurate figures take precedence when available.
 
 ## How to Use
 - Claude on desktop: read via Filesystem MCP
-- Claude on iPhone or any session without MCP: fetch from GitHub Pages URL (TBD — update this line once repo is set up)
+- Claude on iPhone or any session without MCP: fetch from https://raw.githubusercontent.com/Milo9/meal-plan/refs/heads/main/recipe-nutrition.md
 
 ---
 
