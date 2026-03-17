@@ -29,6 +29,12 @@ Label-accurate values. Serving sizes reflect typical use. Add these ad-hoc when 
 | Naturally Amped Fiesta Kraut | 2 tbsp (30g) | 5 | 0.3g | 2g | 0g | 0g | 230mg |
 | Ajinomoto Hondashi Bonito Seasoning | 1 tsp (1g) | 0 | 0.2g | 0g | 0g | 0g | 180mg |
 
+### Pantry Staples
+
+| Item | Serving | Cal | Protein | Carbs | Fibre | Sat Fat | Sodium |
+|---|---|---|---|---|---|---|---|
+| PC Blue Menu Diced Tomatoes (no salt added) | ½ cup (125mL) | 25 | 1g | 6g | 1g | 0g | 5mg |
+
 ### Beverages
 
 | Item | Serving | Cal | Protein | Carbs | Fibre | Sat Fat | Sodium |
@@ -38,6 +44,32 @@ Label-accurate values. Serving sizes reflect typical use. Add these ad-hoc when 
 ---
 
 ## Recipes
+
+### Best Lentil Soup (Cookie and Kate, Milo's version)
+*Base: Cookie and Kate. Modifications: add red lentils to thicken instead of blending.*
+
+**Yield:** ~5 servings | **Serving:** 2 cups
+
+| Cal | Protein | Carbs | Fibre | Sat Fat | Sodium |
+|---|---|---|---|---|---|
+| ~310 | ~12g | ~41g | ~9g | ~1.5g | ~145mg* |
+
+*\*Sodium assumes low-sodium vegetable broth with no added salt. Regular broth pushes sodium to ~710mg/serving. Adding 1 tsp salt to low-sodium broth adds ~460mg/serving.*
+
+**Key ingredients (full recipe):**
+- ¼ cup extra virgin olive oil: 477 cal, 7.7g sat fat
+- 1 cup dry brown/green lentils: 678 cal, 48g protein, 116g carbs, 31g fibre
+- 1 can (796mL) PC Blue Menu diced tomatoes (NSA): ~160 cal, 6g protein, 38g carbs, 32mg sodium
+- Low-sodium vegetable broth 4 cups: ~60 cal, ~520mg sodium
+- Vegetables (onion, carrots, garlic, spinach): ~151 cal, ~10g carbs
+
+**Notes:**
+- Milo's method: add red lentils (~¼ cup) at the start with the green/brown lentils so they dissolve and thicken the soup naturally, rather than blending — adds ~42 cal, ~3g protein, ~7g carbs, ~2g fibre per serving
+- Sodium is highly broth-dependent — use low-sodium broth and track the brand
+- Strong fibre per serving (~12g) — a good fibre day anchor meal
+- No fresh herbs required
+
+---
 
 ### Easy Veggie Wrap (Milo's version)
 *Base: A Couple Cooks. Modifications: no carrots, no avocado, add hummus spread and a handful of fresh sprouts per wrap, chickpea filling yields 3 full wraps not 2.*
