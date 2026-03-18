@@ -1,5 +1,5 @@
 # Milo — Recipe Nutrition Reference
-*Last updated: March 17, 2026 (Veggie Wrap macros corrected to label-accurate values)*
+*Last updated: March 18, 2026 (Added Gay Lea Low Fat Sour Cream and PC Smoky Chipotle Salsa)*
 
 Estimated macros per serving for Milo's modified recipes. Used by Claude (desktop and mobile) to assist with macro tracking. Fetch this file when calculating macros for a known recipe.
 
@@ -28,6 +28,8 @@ Label-accurate values. Serving sizes reflect typical use. Add these ad-hoc when 
 | Naturally Amped Dill Pickle Kraut | 2 tbsp (30g) | 5 | 0.3g | 1g | 0g | 0g | 230mg |
 | Naturally Amped Fiesta Kraut | 2 tbsp (30g) | 5 | 0.3g | 2g | 0g | 0g | 230mg |
 | Ajinomoto Hondashi Bonito Seasoning | 1 tsp (1g) | 0 | 0.2g | 0g | 0g | 0g | 180mg |
+| Gay Lea Low Fat Sour Cream | 2 tbsp (30mL) | 20 | 1g | 2g | 0g | 0.5g | 25mg |
+| PC Smoky Chipotle Salsa | ¼ cup (60mL) | 15 | 1g | 3g | 0g | 0g | 210mg |
 
 ### Pantry Staples
 
