@@ -5,14 +5,6 @@ Estimated macros per serving for Milo's modified recipes. Used by Claude (deskto
 
 All values are estimates. Label-accurate figures take precedence when available. Serving sizes reflect Milo's actual portions, not recipe defaults.
 
----
-
-## How to Use
-Fetch this file from URL when a meal being logged matches a recipe listed below:
-https://raw.githubusercontent.com/Milo9/meal-plan/refs/heads/main/recipe-nutrition.md
-
----
-
 ## Condiments & Common Ingredients
 
 Label-accurate values. Serving sizes reflect typical use. Add these ad-hoc when logging meals.
